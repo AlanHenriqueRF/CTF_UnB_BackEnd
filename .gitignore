@@ -1,5 +1,6 @@
 # Ignorar todos os arquivos Markdown de planejamento/contexto
 *.md
+backend/*.md
 
 # Dependências e builds Node/TypeScript
 node_modules/
