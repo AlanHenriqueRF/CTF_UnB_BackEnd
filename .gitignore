@@ -1,0 +1,16 @@
+# Ignorar todos os arquivos Markdown de planejamento/contexto
+*.md
+
+# Dependências e builds Node/TypeScript
+node_modules/
+dist/
+backend/node_modules/
+backend/dist/
+
+# Variáveis de ambiente locais
+.env
+backend/.env
+
+# Arquivos temporários e logs
+*.log
+.DS_Store

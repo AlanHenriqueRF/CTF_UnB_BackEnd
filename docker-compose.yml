@@ -8,7 +8,7 @@ services:
       POSTGRES_PASSWORD: unb_homolog_5432
       POSTGRES_DB: sigaa_next
     ports:
-      - "5432:5432"
+      - "${POSTGRES_HOST_PORT:-5433}:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U sigaa_ro_audit -d sigaa_next"]
       interval: 5s
