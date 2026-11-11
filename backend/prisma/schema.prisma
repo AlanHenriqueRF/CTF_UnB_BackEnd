@@ -1,0 +1,50 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Staff {
+  id            Int      @id @default(autoincrement())
+  matricula     String   @unique
+  nome          String
+  cargo         String
+  departamento  String
+  email         String   @unique
+  visivelFront  Boolean  @default(true) @map("visivel_front")
+  theme         String   @default("light")
+  // Campos sensíveis que não deveriam ir para o Front-end (Excessive Data Exposure)
+  role          String   @default("user")
+  loginLinux    String?  @map("login_linux")
+  notaPrivada   String?  @map("nota_privada")
+  draftEndpoint String?  @map("draft_endpoint")
+
+  @@map("staff_members")
+}
+
+model Course {
+  id           Int    @id @default(autoincrement())
+  codigo       String @unique
+  nome         String
+  departamento String
+  professor    String
+  semestre     String
+  vagas        Int
+
+  @@map("academic_courses")
+}
+
+// Tabela sensível de manutenção (acessível via Ramificação SQL Injection ou Porta 5432)
+model SystemVault {
+  id          Int      @id @default(autoincrement())
+  serviceName String   @unique @map("service_name")
+  username    String
+  secretValue String   @map("secret_value")
+  description String
+  updatedAt   DateTime @default(now()) @map("updated_at")
+
+  @@map("sys_maintenance_vault")
+}
