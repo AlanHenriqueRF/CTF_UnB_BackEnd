@@ -2,6 +2,8 @@
 **Tema:** Red Team Universitário — *SIGAA-Next / LabSec UnB (Ambiente de Homologação STI)*
 **Stack:** Node.js + Express + TypeScript + Prisma ORM + PostgreSQL 16 (Porta `5432`)
 
+> ✅ **Status (2026-11-11):** O Front-end (SPA) que consome este contrato **já foi implementado** (em `./frontend`, por este usuário, após o Integrante 2 não poder concluir) e testado ao vivo. Ele renderiza no DOM **apenas** os campos públicos descritos abaixo, mantendo o `_debug_internal` só no JSON. Detalhes na **Seção 5 do `CONTEXTO_PROJETO.md`**.
+
 ---
 
 ## 1. Visão Geral e Portas Expostas

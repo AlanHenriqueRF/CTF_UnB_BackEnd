@@ -1,0 +1,14 @@
+# SIGAA-Next / STI — Ambiente de Homologação
+# robots.txt — controle de indexação de crawlers
+
+User-agent: *
+Disallow: /api/
+Disallow: /admin-legacy/
+Disallow: /backup_portal_v1/
+Disallow: /.git/
+Disallow: /secret_painel_sigaa_v1/
+
+# NOTA STI (migração v1 -> v2):
+# O painel administrativo legado (SIGAA v1) foi DESATIVADO em 2023.
+# Qualquer credencial encontrada em backups antigos está revogada no PAM.
+# Para reportar falhas de segurança: csirt.sti@unb-next.edu.br

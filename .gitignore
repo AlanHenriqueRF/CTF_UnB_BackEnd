@@ -17,3 +17,8 @@ backend/.env
 # Arquivos temporários e logs
 *.log
 .DS_Store
+
+# sh exploit
+exploit_test.sh
+./exploit_test.sh
+.exploit_test.sh

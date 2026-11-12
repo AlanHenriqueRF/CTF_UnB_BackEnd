@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="SIGAA - Sistema Integrado de Gestão de Atividades Acadêmicas (SIGAA-Next / STI - Ambiente de Homologação)." />
+  <meta name="robots" content="index, follow" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <title>SIGAA-Next - Sistema Integrado de Gestão de Atividades Acadêmicas</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='8' fill='%23315680'/%3E%3Ctext x='50' y='70' font-size='44' font-family='Arial' font-weight='bold' text-anchor='middle' fill='%23ffffff'%3ES%3C/text%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="css/style.css" />
+
+  <!--
+    ================================================================
+    SIGAA-Next · Portal Discente (Divisão de Sistemas Acadêmicos / STI)
+    Ambiente: HOMOLOGAÇÃO — NÃO É PRODUÇÃO (dados fictícios · LabSec)
+    ----------------------------------------------------------------
+    Changelog interno (v2.1.0-homolog):
+      - Removemos da aba "Servidores" a exibição do Token de Manutenção
+        e da senha da chave SSH porque era informação sensível.
+        Agora a listagem pública mostra só Nome, Matrícula, Cargo,
+        Departamento e E-mail.
+        (O back-end ainda devolve os campos internos no JSON — pedir
+         pro Lucas filtrar o serializer de /api/v1/staff antes do pentest!)
+      - A busca legada "Consultar Componente Curricular" (Ensino >
+        Consultas Gerais) ainda monta a query concatenando o texto do
+        usuário. A DBA Camila já abriu chamado. NÃO publicar em produção.
+      - TODO: remover as rotas de administração comentadas no app.js
+        antes de publicar em produção.
+    ================================================================
+  -->
+</head>
+<body>
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+
+  <div id="container">
+
+    <!-- ===================== BARRA DO SISTEMA (topo azul) ===================== -->
+    <div id="barra-sistema">
+      <div class="bs-esq">
+        <strong>UnB - SIGAA -</strong>
+        <span class="bs-sub">Sistema Integrado de Gestão de Atividades Acadêmicas</span>
+      </div>
+      <div class="bs-dir">
+        <a class="fonteMaior" href="#" title="Aumentar o texto"><strong>A</strong>+</a>
+        <a class="fonteMenor" href="#" title="Diminuir o texto"><strong>A</strong>-</a>
+        <span class="bs-sep">|</span>
+        <a href="#conteudo" title="Portal Público">Portal Público</a>
+        <span class="bs-sep">|</span>
+        <!-- styleswitch: alterna o tema (contraste). Sincroniza via PUT /api/v1/profile -->
+        <a id="theme-toggle" href="#" title="Alternar contraste / tema">Ajuda?</a>
+        <span class="bs-tempo"><em>Tempo de Sessão:</em> <span id="spanRelogio">00:30</span></span>
+        <a id="btn-sair" href="#" title="Sair">SAIR</a>
+        <span class="env-badge">HOMOLOGAÇÃO</span>
+      </div>
+    </div>
+
+    <!-- ===================== BARRA DO USUÁRIO (cinza) ===================== -->
+    <div id="barra-usuario">
+      <div class="bu-perfil">
+        <strong id="bu-nome">Discente de Homologação</strong><br />
+        <span id="bu-depto">DEPTO CIÊNCIAS DA COMPUTAÇÃO (11.01.01.15.01)</span>
+      </div>
+      <div class="bu-semestre">
+        Semestre atual: <strong id="hdr-periodo">2026.2</strong>
+      </div>
+      <div class="bu-acoes">
+        <a href="#" onclick="return false;"><span class="ic">🧩</span> Módulos</a>
+        <a href="#servidores"><span class="ic">✉️</span> Caixa Postal</a>
+        <a href="mailto:suporte.sti@unb-next.edu.br"><span class="ic">🔔</span> Abrir Chamado</a>
+        <a href="#conteudo"><span class="ic">🎓</span> Menu Discente</a>
+        <a href="#preferencias"><span class="ic">🔑</span> Alterar senha</a>
+      </div>
+    </div>
+
+    <!-- ===================== BARRA DE MÓDULOS (bege) ===================== -->
+    <div id="menu-principal">
+      <ul class="modbar">
+        <li class="tem-menu" id="li-ensino">
+          <a href="#" id="menu-ensino-btn"><span class="ic">📚</span> Ensino</a>
+          <!-- Dropdown do módulo Ensino (réplica do JSCookMenu do SIGAA) -->
+          <div class="submenu" id="submenu-ensino" hidden>
+            <a href="#" onclick="return false;" class="sm-item">Consultar Minhas Notas</a>
+            <a href="#" onclick="return false;" class="sm-item">Consultar Índices Acadêmicos</a>
+            <a href="#" onclick="return false;" class="sm-item">Emitir Atestado de Matrícula</a>
+            <a href="#" onclick="return false;" class="sm-item">Emitir Histórico</a>
+            <a href="#" onclick="return false;" class="sm-item">Calendário Acadêmico</a>
+            <div class="sm-sep"></div>
+            <div class="sm-group tem-submenu" id="sm-consultas">
+              <a href="#" class="sm-item sm-parent">Consultas Gerais <span class="sm-arrow">▸</span></a>
+              <div class="submenu submenu--filho" id="submenu-consultas" hidden>
+                <a href="#" onclick="return false;" class="sm-item">Consultar Curso</a>
+                <!-- Esta consulta legada monta a query concatenando o texto digitado (ver changelog). -->
+                <a href="#" class="sm-item" id="link-consultar-componente">Consultar Componente Curricular</a>
+                <a href="#" onclick="return false;" class="sm-item">Consultar Estrutura Curricular</a>
+              </div>
+            </div>
+            <a href="#" onclick="return false;" class="sm-item">Orientações de Atividades</a>
+          </div>
+        </li>
+        <li><a href="#" onclick="return false;"><span class="ic">🔬</span> Pesquisa</a></li>
+        <li><a href="#" onclick="return false;"><span class="ic">🤝</span> Extensão</a></li>
+        <li><a href="#" onclick="return false;"><span class="ic">💰</span> Bolsas</a></li>
+        <li><a href="#" onclick="return false;"><span class="ic">💼</span> Estágio</a></li>
+        <li><a href="#" onclick="return false;"><span class="ic">🌐</span> Mobilidade</a></li>
+        <li><a href="#servidores"><span class="ic">📦</span> Outros</a></li>
+        <!-- Módulo administrativo oculto da navegação pública (controle só no client-side) -->
+        <li class="modbar__admin">
+          <button id="btn-admin" disabled title="Acesso restrito à coordenação do STI">Administração</button>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Breadcrumb -->
+    <div id="breadcrumb">
+      <a href="#conteudo" id="bc-home">Portal Discente</a>
+      <span id="bc-extra" hidden> &raquo; <strong id="bc-extra-txt"></strong></span>
+    </div>
+
+    <!-- ===================== CONTEÚDO ===================== -->
+    <div id="conteudo">
+
+      <!-- ================= VISÃO: PÁGINA INICIAL ================= -->
+      <div id="view-home" class="view">
+        <div id="portal-discente">
+
+          <!-- ---------- Coluna principal (esquerda / larga) ---------- -->
+          <div id="main-discente">
+
+            <!-- Notícia em destaque -->
+            <div id="noticias-portal">
+              <p class="noticia destaque">WPOS 2026 — Submissões até 05/11 e atividades de segurança no dia 14/11</p>
+              <p class="descricao">O WPOS 2026 (Workshop de Graduação e Pós-Graduação do Departamento de Ciência da Computação)
+                acontecerá nos dias 12, 13 e 14 de novembro de 2026. Esta instância é o <strong>ambiente de homologação</strong>
+                mantido pela Divisão de Sistemas Acadêmicos (STI) — dados fictícios, exercício autorizado LabSec.</p>
+            </div>
+
+            <!-- Turmas do semestre -->
+            <div class="bloco-titulo">Turmas do Semestre</div>
+            <div class="simple-panel">
+              <table class="listagem tbl-turmas">
+                <thead>
+                  <tr><th>Componente Curricular</th><th>Local</th><th>Horário</th></tr>
+                </thead>
+                <tbody>
+                  <tr class="sem-row"><td colspan="3">2026.2</td></tr>
+                  <tr class="linhaPar"><td><a href="#disciplinas">ESTRUTURAS DE DADOS (CIC0090)</a></td><td>PJC BT 053</td><td>246M12</td></tr>
+                  <tr class="linhaImpar"><td><a href="#disciplinas">SISTEMAS OPERACIONAIS</a></td><td>PJC BT 020</td><td>6T456</td></tr>
+                  <tr class="linhaPar"><td><a href="#disciplinas">REDES DE COMPUTADORES</a></td><td>FT BT-34/15</td><td>6M34</td></tr>
+                  <tr class="linhaImpar"><td><a href="#disciplinas">SEGURANÇA COMPUTACIONAL</a></td><td>FT BT-43/15</td><td>35M34</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Quadro de Servidores do STI (consome GET /api/v1/staff) -->
+            <div id="servidores" class="bloco-titulo">Servidores do STI (Homologação)</div>
+            <div class="simple-panel">
+              <p class="box-hint">Servidores e colaboradores da Secretaria de Tecnologia da Informação (apenas registros públicos).</p>
+              <div id="staff-status" class="loading">Carregando servidores…</div>
+              <table id="staff-table" class="listagem" hidden>
+                <thead>
+                  <tr><th>Servidor</th><th>Matrícula</th><th>Cargo / Função</th><th>Lotação</th><th>E-mail institucional</th></tr>
+                </thead>
+                <tbody id="staff-tbody"></tbody>
+              </table>
+            </div>
+
+            <!-- Fórum do curso (ambientação) -->
+            <div class="bloco-titulo">Fórum do Curso de Ciência da Computação</div>
+            <div class="simple-panel">
+              <p class="aviso-amarelo">Caro(a) Aluno(a), este fórum é destinado a discussões relacionadas ao seu curso.
+                Todos(as) os(as) alunos(as) do curso e a coordenação têm acesso a ele.</p>
+              <table class="listagem">
+                <thead>
+                  <tr><th>Título</th><th>Autor</th><th style="text-align:center">Respostas</th><th style="text-align:center">Data</th></tr>
+                </thead>
+                <tbody>
+                  <tr class="linhaPar"><td>Comunicado: janela de manutenção do SIGAA-Next</td><td>00721691099</td><td style="text-align:center">0</td><td style="text-align:center">05/11/2026</td></tr>
+                  <tr class="linhaImpar"><td>Migração do portal v1 para v2 — contas legadas revogadas</td><td>00721691099</td><td style="text-align:center">0</td><td style="text-align:center">28/10/2026</td></tr>
+                  <tr class="linhaPar"><td>MONITORIA CIC 2026/2 — Resultado Final</td><td>00721691099</td><td style="text-align:center">0</td><td style="text-align:center">24/08/2026</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+
+          <!-- ---------- Coluna lateral (direita / estreita) ---------- -->
+          <div id="lateral-discente">
+            <div class="lat-links">
+              <a href="#servidores">Mensagens</a>
+              <a href="#preferencias">Atualizar Foto e Perfil</a>
+              <a href="#preferencias">Meus Dados Pessoais</a>
+            </div>
+
+            <div class="lat-foto" aria-hidden="true">
+              <svg viewBox="0 0 100 120" width="90" height="108">
+                <rect width="100" height="120" fill="#e9ecdf"/>
+                <circle cx="50" cy="46" r="23" fill="#b9c3a6"/>
+                <path d="M15 116c0-22 16-34 35-34s35 12 35 34z" fill="#b9c3a6"/>
+              </svg>
+            </div>
+            <p class="lat-nome" id="lat-nome">Discente de Homologação</p>
+
+            <div class="lat-banner">Avaliação Institucional</div>
+            <div class="lat-links2">
+              <a href="#" onclick="return false;">Regulamento dos Cursos de Graduação</a>
+              <a href="#" onclick="return false;">Calendário Acadêmico de Graduação</a>
+            </div>
+
+            <!-- Dados Institucionais (fictícios · homologação) -->
+            <div class="lat-box">
+              <h4>Dados Institucionais</h4>
+              <table class="lat-dados">
+                <tr><td>Matrícula:</td><td id="di-matricula">20260110045</td></tr>
+                <tr><td>Curso:</td><td>CIÊNCIA DA COMPUTAÇÃO/CIC - Bacharelado - MT</td></tr>
+                <tr><td>Nível:</td><td>GRADUAÇÃO</td></tr>
+                <tr><td>Status:</td><td>ATIVO</td></tr>
+                <tr><td>E-Mail:</td><td>discente.demo@homolog…</td></tr>
+                <tr><td>Entrada:</td><td>2023.2</td></tr>
+              </table>
+            </div>
+
+            <div class="lat-box">
+              <h4 class="center">Índices Acadêmicos</h4>
+              <table class="lat-dados">
+                <tr><td>IRA:</td><td class="right">3.2140</td></tr>
+                <tr><td>MP:</td><td class="right">3.0512</td></tr>
+              </table>
+              <p class="center"><a href="#" onclick="return false;"><strong>Detalhar</strong></a></p>
+            </div>
+
+            <div class="lat-box">
+              <h4 class="center">Situação do Sistema</h4>
+              <table class="lat-dados">
+                <tr><td>API REST:</td><td class="right"><strong id="stat-api">verificando…</strong></td></tr>
+                <tr><td>Banco:</td><td class="right">PostgreSQL 16</td></tr>
+                <tr><td>Versão:</td><td class="right"><span id="stat-version">—</span></td></tr>
+                <tr><td>Gateway:</td><td class="right"><span id="stat-gateway">—</span></td></tr>
+                <tr><td>Ambiente:</td><td class="right">Homologação</td></tr>
+              </table>
+            </div>
+
+            <!-- Preferências (tema) — PUT /api/v1/profile -->
+            <div class="lat-box" id="preferencias">
+              <h4>Preferências do Portal</h4>
+              <p class="box-hint" style="margin:8px">Tema de exibição (sincroniza com seu perfil via <code>PUT /api/v1/profile</code>).</p>
+              <p style="margin:8px"><a id="save-theme" href="#" class="link-acao">» Salvar tema atual no perfil</a></p>
+              <p id="theme-feedback" class="feedback" role="status"></p>
+            </div>
+          </div>
+
+          <div class="clear"></div>
+        </div>
+      </div>
+
+      <!-- ================= VISÃO: CONSULTAR COMPONENTE CURRICULAR ================= -->
+      <div id="view-componentes" class="view" hidden>
+        <div class="sub-breadcrumb">PORTAL DISCENTE &gt; CONSULTA GERAL DE COMPONENTES CURRICULARES</div>
+
+        <form id="comp-form" class="consulta-form" autocomplete="off">
+          <div class="cf-titulo">Informe os Critérios de Consulta</div>
+          <div class="cf-corpo">
+            <div class="cf-linha">
+              <label><input type="checkbox" checked disabled /> Nível:</label>
+              <select name="nivel"><option>GRADUAÇÃO</option><option>PÓS-GRADUAÇÃO</option><option>TÉCNICO</option></select>
+            </div>
+            <div class="cf-linha">
+              <!-- Campo injetável: o valor digitado é enviado em /api/v1/courses/search?dept=... -->
+              <label><input type="checkbox" checked /> Código:</label>
+              <input type="text" id="comp-codigo" name="codigo" placeholder="ex.: CIC" value="CIC" />
+            </div>
+            <div class="cf-linha">
+              <label><input type="checkbox" /> Nome do componente:</label>
+              <input type="text" id="comp-nome" name="nome" placeholder="(opcional) nome do componente" />
+            </div>
+            <div class="cf-linha">
+              <label><input type="checkbox" /> Pré-requisito:</label>
+              <input type="text" name="prereq" />
+            </div>
+            <div class="cf-linha">
+              <label><input type="checkbox" /> Co-requisito:</label>
+              <input type="text" name="coreq" />
+            </div>
+            <div class="cf-linha">
+              <label><input type="checkbox" /> Equivalência:</label>
+              <input type="text" name="equiv" />
+            </div>
+            <div class="cf-linha">
+              <label><input type="checkbox" /> Unidade responsável:</label>
+              <select name="unidade"><option>--&gt; SELECIONE &lt;--</option><option>DEPTO CIÊNCIA DA COMPUTAÇÃO</option></select>
+            </div>
+            <div class="cf-linha">
+              <label><input type="checkbox" /> Tipo do componente:</label>
+              <select name="tipo"><option>--&gt; SELECIONE &lt;--</option><option>DISCIPLINA</option><option>MÓDULO</option></select>
+            </div>
+            <div class="cf-linha">
+              <label><input type="checkbox" /> Modalidade:</label>
+              <select name="modalidade"><option>--&gt; SELECIONE &lt;--</option><option>PRESENCIAL</option><option>A DISTÂNCIA</option></select>
+            </div>
+            <div class="cf-linha">
+              <label><input type="checkbox" /> Exibir resultado da consulta em formato de relatório</label>
+            </div>
+          </div>
+          <div class="cf-acoes">
+            <button type="submit" class="botao">Buscar</button>
+            <button type="button" class="botao" id="comp-cancelar">Cancelar</button>
+          </div>
+        </form>
+
+        <div class="cf-legenda">
+          🔍 : Visualizar componente curricular &nbsp;&nbsp; 🖨️ : Relatório para impressão &nbsp;&nbsp; 📄 : Programa atual do componente
+        </div>
+
+        <div id="comp-status" class="loading" style="margin:10px 0">Informe os critérios e clique em <strong>Buscar</strong>.</div>
+
+        <div id="comp-resultado" hidden>
+          <div class="cf-result-titulo">Componentes Curriculares Encontrados (<span id="comp-count">0</span>)</div>
+          <table id="comp-table" class="listagem">
+            <thead>
+              <tr><th>Código</th><th>Nome</th><th>Nível de ensino</th><th>CH</th><th>Tipo</th></tr>
+            </thead>
+            <tbody id="comp-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ===================== RODAPÉ ===================== -->
+    <div id="rodape">
+      <p>
+        SIGAA-Next | Secretaria de Tecnologia da Informação - STI | Copyright © 2006-2026 - UnB-Next
+        - homolog.sigaa-next - <a href="#" onclick="return false;" id="footer-version">v2.1.0-homolog</a>
+      </p>
+    </div>
+  </div>
+
+  <!-- Modal do módulo administrativo (validação apenas client-side) -->
+  <div id="admin-modal" class="modal" hidden>
+    <div class="modal__box">
+      <h4>Módulo de Administração — STI</h4>
+      <p id="admin-modal-text">Verificando credenciais…</p>
+      <button class="botao" data-close-modal>Fechar</button>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
