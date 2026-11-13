@@ -36,11 +36,10 @@ COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 # --- Ponto de integração do Integrante 4 (privesc / flags) ---
-# Se existir uma pasta ../privesc no repo com um script privesc-init.sh,
-# ele é copiado para cá e executado automaticamente pelo entrypoint.
-# Comentar/descomentar conforme a estrutura final do repositório:
-# COPY privesc/ /opt/ctf/
-# RUN chmod +x /opt/ctf/privesc-init.sh
+# A pasta privesc/ (neste contexto de build) traz o privesc-init.sh, copiado
+# para /opt/ctf/ e executado automaticamente pelo entrypoint (hook de escalada).
+COPY privesc/ /opt/ctf/
+RUN chmod +x /opt/ctf/privesc-init.sh
 
 # Portas: 21 (FTP controle), 21100-21110 (FTP passivo), 22 (SSH)
 EXPOSE 21 22 21100-21110
