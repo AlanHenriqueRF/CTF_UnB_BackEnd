@@ -1,8 +1,7 @@
 # Ignorar todos os arquivos Markdown de planejamento/contexto
 *.md
 backend/*.md
-backend/CONTRATO_API_GRUPO.md
-PLANO_CTF_GRUPO.md
+!README.md
 
 # Dependências e builds Node/TypeScript
 node_modules/
