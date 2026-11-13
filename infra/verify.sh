@@ -82,7 +82,17 @@ fi
 
 # ---------------------------------------------------------------------------
 section "2. SSH — banner e pista do header"
-BANNER=$(timeout 10 bash -c "exec 3<>/dev/tcp/${SSH_HOST}/${SSH_PORT}; head -c 2000 <&3" 2>/dev/null || true)
+# O banner do SSH (/etc/issue.net) é enviado como SSH_MSG_USERAUTH_BANNER, ou seja,
+# só DEPOIS do handshake, durante a fase de autenticação — ler bytes crus do socket
+# pega apenas a string de versão ("SSH-2.0-OpenSSH..."). Por isso iniciamos uma conexão
+# SSH real (sem tentar autenticar) e capturamos o banner que o cliente imprime no stderr.
+if command -v ssh >/dev/null 2>&1; then
+  BANNER=$(ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
+    -o PreferredAuthentications=none -o ConnectTimeout=8 \
+    -p "$SSH_PORT" "${EXPECTED_SSH_USER}@${SSH_HOST}" 2>&1 || true)
+else
+  BANNER=$(timeout 10 bash -c "exec 3<>/dev/tcp/${SSH_HOST}/${SSH_PORT}; head -c 2000 <&3" 2>/dev/null || true)
+fi
 if [ -z "$BANNER" ]; then
   fail "Não foi possível conectar na porta SSH (${SSH_HOST}:${SSH_PORT})"
 else

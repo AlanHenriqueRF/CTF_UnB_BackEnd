@@ -27,6 +27,13 @@ if [ -n "${ESTAGIARIO_SSH_PASS:-}" ]; then
   echo "estagiario_sti:${ESTAGIARIO_SSH_PASS}" | chpasswd
 fi
 
+# --- 3b. secure_chroot_dir do vsftpd (defensivo) ---
+# O vsftpd exige que o diretório de 'secure_chroot_dir' exista, esteja vazio e
+# não seja gravável, senão derruba toda sessão com "500 OOPS ... secure_chroot_dir".
+# /var/run pode ser tmpfs em alguns runtimes, então recriamos sempre no boot.
+mkdir -p /var/run/vsftpd/empty
+chmod 555 /var/run/vsftpd/empty
+
 # --- 4. Permissões (defensivo — garante que o build não deixou nada errado) ---
 chmod 700 /home/estagiario_sti/.ssh 2>/dev/null || true
 chmod 600 /home/estagiario_sti/.ssh/authorized_keys 2>/dev/null || true

@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         curl \
         ca-certificates \
     && rm -rf /var/lib/apt/lists/* \
-    && mkdir -p /var/run/sshd /srv/ftp
+    && mkdir -p /var/run/sshd /srv/ftp /var/run/vsftpd/empty
 
 # --- Usuário de manutenção (foothold) ---
 # A senha de contingência (ESTAGIARIO_SSH_PASS) é aplicada em runtime pelo
