@@ -80,11 +80,6 @@
           <a href="#" id="menu-ensino-btn"><span class="ic">📚</span> Ensino</a>
           <!-- Dropdown do módulo Ensino (réplica do JSCookMenu do SIGAA) -->
           <div class="submenu" id="submenu-ensino" hidden>
-            <a href="#" onclick="return false;" class="sm-item">Consultar Minhas Notas</a>
-            <a href="#" onclick="return false;" class="sm-item">Consultar Índices Acadêmicos</a>
-            <a href="#" onclick="return false;" class="sm-item">Emitir Atestado de Matrícula</a>
-            <a href="#" onclick="return false;" class="sm-item">Emitir Histórico</a>
-            <a href="#" onclick="return false;" class="sm-item">Calendário Acadêmico</a>
             <div class="sm-sep"></div>
             <div class="sm-group tem-submenu" id="sm-consultas">
               <a href="#" class="sm-item sm-parent">Consultas Gerais <span class="sm-arrow">▸</span></a>
@@ -268,37 +263,6 @@
               <!-- Campo injetável: o valor digitado é enviado em /api/v1/courses/search?dept=... -->
               <label><input type="checkbox" checked /> Código:</label>
               <input type="text" id="comp-codigo" name="codigo" placeholder="ex.: CIC" value="CIC" />
-            </div>
-            <div class="cf-linha">
-              <label><input type="checkbox" /> Nome do componente:</label>
-              <input type="text" id="comp-nome" name="nome" placeholder="(opcional) nome do componente" />
-            </div>
-            <div class="cf-linha">
-              <label><input type="checkbox" /> Pré-requisito:</label>
-              <input type="text" name="prereq" />
-            </div>
-            <div class="cf-linha">
-              <label><input type="checkbox" /> Co-requisito:</label>
-              <input type="text" name="coreq" />
-            </div>
-            <div class="cf-linha">
-              <label><input type="checkbox" /> Equivalência:</label>
-              <input type="text" name="equiv" />
-            </div>
-            <div class="cf-linha">
-              <label><input type="checkbox" /> Unidade responsável:</label>
-              <select name="unidade"><option>--&gt; SELECIONE &lt;--</option><option>DEPTO CIÊNCIA DA COMPUTAÇÃO</option></select>
-            </div>
-            <div class="cf-linha">
-              <label><input type="checkbox" /> Tipo do componente:</label>
-              <select name="tipo"><option>--&gt; SELECIONE &lt;--</option><option>DISCIPLINA</option><option>MÓDULO</option></select>
-            </div>
-            <div class="cf-linha">
-              <label><input type="checkbox" /> Modalidade:</label>
-              <select name="modalidade"><option>--&gt; SELECIONE &lt;--</option><option>PRESENCIAL</option><option>A DISTÂNCIA</option></select>
-            </div>
-            <div class="cf-linha">
-              <label><input type="checkbox" /> Exibir resultado da consulta em formato de relatório</label>
             </div>
           </div>
           <div class="cf-acoes">
