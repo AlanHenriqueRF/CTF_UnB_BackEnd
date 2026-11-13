@@ -59,8 +59,7 @@ próximo start.
 
 ## ⚠️ Uso autorizado
 
-Ambiente **educacional e autorizado** (disciplina de Segurança Computacional /
-LabSec). Toda a infraestrutura, usuários, credenciais e dados são **fictícios** e
+Ambiente **educacional e autorizado** (disciplina de Tópicos avançados de computação(voltado para copetições do tipo CTF)). Toda a infraestrutura, usuários, credenciais e dados são **fictícios** e
 existem apenas dentro dos containers. Não hospede este desafio exposto à internet
 pública sem o devido controle de acesso.
 ```
