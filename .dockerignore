@@ -1,0 +1,10 @@
+# Contexto de build das imagens de DISTRIBUIÇÃO (infra/dist/Dockerfile.api usa a raiz).
+# Mantém o contexto enxuto e evita vazar lixo de desenvolvimento para dentro da imagem.
+.git
+**/node_modules
+backend/dist
+**/*.log
+*.pdf
+exploit_test.sh
+ctf_e2e_test.sh
+infra/verify.sh

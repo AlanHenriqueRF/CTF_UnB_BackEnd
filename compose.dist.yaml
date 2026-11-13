@@ -1,0 +1,60 @@
+# ======================================================================
+#  SIGAA-Next CTF  —  arquivo de distribuição (compose.dist.yaml)
+#  Segurança Computacional / Tópicos Avançados — LabSec, UnB
+# ----------------------------------------------------------------------
+#  Baixa e sobe o desafio COMPLETO (3 imagens públicas do Docker Hub) com
+#  UM ÚNICO comando — não precisa clonar nada nem configurar nada:
+#
+#      docker compose -f compose.dist.yaml up -d
+#
+#  Depois abra no navegador:
+#
+#      http://localhost:3000
+#
+#  A partir daí o alvo é seu: comece pelo reconhecimento de rede.
+#  As flags estão no formato TAC{...}.
+#
+#  Resetar para o estado inicial (banco limpo):
+#      docker compose -f compose.dist.yaml down -v
+#      docker compose -f compose.dist.yaml up -d
+# ======================================================================
+services:
+  postgres-db:
+    image: alanhenriquerf/sigaa-next-db:1.0
+    container_name: sigaa-next-postgres
+    restart: unless-stopped
+    # Banco NÃO é exposto ao host — alcançável só pela API na rede interna.
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sigaa_ro_audit -d sigaa_next"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - sigaa-net
+
+  backend-api:
+    image: alanhenriquerf/sigaa-next-api:1.0
+    container_name: sigaa-next-api
+    restart: unless-stopped
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+    ports:
+      - "3000:3000"      # Portal web + API REST (vetor de entrada)
+    networks:
+      - sigaa-net
+
+  ftp-ssh:
+    image: alanhenriquerf/sigaa-next-ftpssh:1.0
+    container_name: sigaa-next-ftp-ssh
+    restart: unless-stopped
+    ports:
+      - "21:21"                    # FTP (controle) — pistas / chave SSH cifrada
+      - "21100-21110:21100-21110"  # FTP (modo passivo)
+      - "2222:22"                  # SSH — foothold
+    networks:
+      - sigaa-net
+
+networks:
+  sigaa-net:
+    driver: bridge
