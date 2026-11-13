@@ -1,0 +1,26 @@
+===========================================================
+ CHANGELOG — SIGAA-Next API (homologação STI/UnB)
+ Branch: homolog/2026.2
+===========================================================
+
+[2026-09-14] v2.0.3 - estagiario_sti
+- Ajustes no endpoint /api/v1/staff (listagem de servidores/equipe).
+
+[2026-09-18] v2.0.4 - estagiario_sti
+- Removemos a exibição do login Linux, do token de manutenção e de
+  qualquer referência à chave SSH na tela "Equipe" do Front-end,
+  porque era informação sensível. Agora o usuário comum só vê
+  Nome, Cargo e E-mail na página.
+- OBS: só mexi no componente React (StaffCard.jsx). Não tive tempo
+  de revisar o serializer do back-end ainda, mas acho que não tem
+  problema porque ninguém olha a resposta "crua" da API mesmo.
+
+[2026-09-20] v2.0.5 - coord_redes (review)
+- Aprovado para homologação. Lembrete pro próximo sprint: revisar
+  endpoints de debug antes de ir pra produção definitiva
+  (ver swagger_old.json, ainda não removemos as rotas antigas).
+
+-----------------------------------------------------------
+ Qualquer dúvida, falar com o estagiário responsável
+ (estagiario_sti) ou abrir chamado pro NOC.
+===========================================================

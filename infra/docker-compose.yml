@@ -1,0 +1,66 @@
+services:
+  postgres-db:
+    image: postgres:16-alpine
+    container_name: sigaa-next-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: sigaa_ro_audit
+      POSTGRES_PASSWORD: unb_homolog_5432
+      POSTGRES_DB: sigaa_next
+    # Banco só é alcançável dentro da rede do compose — não expõe porta pro host.
+    # (a porta 5433 ficava exposta na versão anterior; removida por boa prática
+    #  de infra. Se o time precisar inspecionar localmente, usar
+    #  `docker compose exec postgres-db psql ...` em vez de expor a porta.)
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sigaa_ro_audit -d sigaa_next"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - sigaa-net
+
+  backend-api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: sigaa-next-api
+    restart: unless-stopped
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "postgresql://sigaa_ro_audit:unb_homolog_5432@postgres-db:5432/sigaa_next?schema=public"
+      PORT: 3000
+      JWT_SECRET: "sigaa-next-homolog-jwt-key-unb-2026"
+      SSH_KEY_PASSPHRASE: "UnB_ST1_H0m0l0g_2026!#"
+      ESTAGIARIO_SSH_PASS: "estagiario@sigaa2026"
+      FRONTEND_DIR: "/app/frontend"
+    volumes:
+      - ./frontend:/app/frontend:ro
+    ports:
+      - "${API_HOST_PORT:-3000}:3000"
+    networks:
+      - sigaa-net
+
+  ftp-ssh:
+    build:
+      context: ./infra/ftp-ssh
+      dockerfile: Dockerfile
+    container_name: sigaa-next-ftp-ssh
+    restart: unless-stopped
+    environment:
+      # Mesmos valores usados pelo backend (ver tests/exploit_test.sh) — têm
+      # que ficar idênticos nos dois serviços ou o foothold quebra.
+      ESTAGIARIO_SSH_PASS: "estagiario@sigaa2026"
+      # PASV_ADDRESS: ajuste se publicar o desafio com IP/host fixo.
+      # PASV_ADDRESS: "203.0.113.10"
+    ports:
+      - "${FTP_HOST_PORT:-21}:21"
+      - "${SSH_HOST_PORT:-2222}:22"
+      - "21100-21110:21100-21110"
+    networks:
+      - sigaa-net
+
+networks:
+  sigaa-net:
+    driver: bridge

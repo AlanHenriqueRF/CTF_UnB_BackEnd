@@ -1,0 +1,16 @@
+***************************************************************
+ SIGAA-Next — Ambiente de Homologação (STI/UnB)
+ Servidor de Pesquisa — uso restrito e monitorado
+***************************************************************
+
+ AVISO: este servidor homologado aceita apenas conexões
+ originadas pelo Gateway Interno (SGI). Requisições à API
+ feitas diretamente devem incluir o header:
+
+     X-Origin-System: SGI-v2
+
+ Usuário de manutenção ativo: estagiario_sti
+
+ O acesso não autorizado é proibido e sujeito às normas
+ internas de segurança da informação.
+***************************************************************

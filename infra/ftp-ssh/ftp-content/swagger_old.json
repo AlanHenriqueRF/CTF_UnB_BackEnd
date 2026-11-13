@@ -1,0 +1,36 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "SIGAA-Next API (homolog) — versão DESCONTINUADA",
+    "version": "1.4.0-deprecated",
+    "description": "Documentação antiga mantida apenas para referência histórica. NÃO reflete o estado atual da API em produção. Consulte o time de back-end para a versão vigente."
+  },
+  "paths": {
+    "/api/v1/staff": {
+      "get": {
+        "summary": "Lista pública de servidores/equipe técnica",
+        "deprecated": false
+      }
+    },
+    "/api/v1/profile": {
+      "put": {
+        "summary": "Atualiza preferências de tema do usuário logado",
+        "deprecated": false
+      }
+    },
+    "/api/v1/internal/debug": {
+      "get": {
+        "summary": "[INTERNO] Endpoint de diagnóstico do gateway — NÃO documentar na versão pública",
+        "x-internal-note": "Rota legada que redireciona para /api/v1/admin/system-check. Exige header de origem do Gateway Interno. Remover deste arquivo antes da próxima auditoria.",
+        "deprecated": true
+      }
+    },
+    "/api/v1/admin/system-check": {
+      "post": {
+        "summary": "[INTERNO] Diagnóstico de conectividade do servidor de pesquisa",
+        "x-internal-note": "Requer role=admin E header X-Origin-System válido (ver banner do SSH / padrão do Gateway SGI-v2).",
+        "deprecated": false
+      }
+    }
+  }
+}

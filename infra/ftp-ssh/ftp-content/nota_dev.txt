@@ -1,0 +1,19 @@
+Bilhete rápido - estagiario_sti
+
+Pessoal, subi minha chave privada cifrada aqui no FTP só por
+precaução (backup), porque o pendrive que eu uso pra isso andou
+dando pane essa semana. Arquivo: id_rsa_estagiario_sti.enc
+
+A passphrase é a mesma política de senha forte que a gente usa
+pros serviços de homologação (maiúscula + minúscula + número +
+símbolo), não anotei em lugar nenhum por segurança. Se alguém
+do NOC precisar comigo de urgência e eu não estiver on-line, tem
+uma senha de contingência configurada direto no usuário do SSH
+(perguntar pro coord_redes, ele sabe onde está documentada).
+
+Ah, e esse servidor só aceita conexão vindo do Gateway Interno,
+então se for testar localmente não esquece do header customizado
+-- tem um aviso sobre isso no banner quando você conecta no SSH.
+
+Até mais,
+estagiário STI

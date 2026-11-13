@@ -1,0 +1,11 @@
+### credenciais_teste.txt
+### Logins de teste usados na migração para o Portal v2 (2025)
+### STATUS: DESCONTINUADAS — manter apenas para auditoria histórica
+
+usuario: aluno.teste01       senha: Teste@2025
+usuario: servidor.teste02    senha: Homolog#2025
+usuario: coord_redes_old     senha: C00rd#2025legacy
+
+OBS: essas contas foram migradas pro Portal v2 em 2025 e dão erro
+"403 Conta Desativada — Use o Portal v2" em qualquer tentativa de
+login no sistema atual. Não usar como referência para testes novos.
